@@ -54,15 +54,25 @@ for filename in os.listdir(inputDir):
 
 #Copy the commits that contain only additions in c./.h files to RelevantChanges/
 print("Relevant commits")
+resultFoldername = "RelevantChanges/"
+# Delete old results
+if os.path.exists(resultFoldername):
+    shutil.rmtree(resultFoldername)
+os.makedirs(resultFoldername)
 for file in relevantCommitList:
     print(file.name)
-    os.system("cp -v --parents "+file.name+" RelevantChanges/")     
+    os.system("cp -v --parents "+file.name+" "+resultFoldername)     
 
 #Copy the commits that contain tests to Tests/
 print("Tests")
+resultFoldername = "Tests/"
+# Delete old results
+if os.path.exists(resultFoldername):
+    shutil.rmtree(resultFoldername)
+os.makedirs(resultFoldername)
 for file in testCommitList:
     print(file.name)
-    os.system("cp -v --parents "+file.name+" Tests/")  
+    os.system("cp -v --parents "+file.name+" "+resultFoldername)  
     
 #Print results
 print("Found relevant commits: "+str(len(relevantCommitList)))    

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#bash ./ComEx.sh -i /home/lea/Downloads/Jess/customScripts/Results/TargetProjectCode -o /home/lea/Downloads/Comani/Commits
+#bash ComEx.sh -i /home/lea/Downloads/Jess/customScripts/Results/TargetProjectCode -o /home/lea/Downloads/CommitAnalysis/Commits
 
 showHelp() {
     echo -e "\n\t[Com]mit [Ex]tractor\n\n"
