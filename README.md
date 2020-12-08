@@ -22,7 +22,9 @@ The [Com]mit [Ex]traction process (realized as ComEx.sh script) creates a "diff 
 
 The ComEx.sh script creates a "diff file" for each commit available in a git repository (the set of commits to be extracted can be further restricted by a commit list file; see "-l" option below). Such a "diff file" is named by the committer date (in Unix timestamp format) and the commit hash of the extracted commit. It contains the committer date in the first line and all changes introduced by the commit in the following lines. These changes are obtained by calling the "git show" command with some additional options to retrieve the entire content of each file changed by the respective commit. 
 
-# Usage: bash ComEx.sh [-i DIR] [-o DIR]
+# Usage: 
+
+    bash ComEx.sh [-i DIR] [-o DIR]
 
     -i <git_dir>       Specify the directory of the git repository
     -o <output_dir>    Specify the directory to save the "diff files" to
@@ -37,6 +39,7 @@ The ComAn.py Python script analyzes each "diff file" in the given input director
   1. Changing specific test files in the /Tests directory 
   2. Containing only additions in \*.c and \*.h files in the /RelevantChanges directory
 
-# Usage: python3 ComAn.py [DIR]
+# Usage: 
+    python3 ComAn.py [DIR]
 
     -<input_dir>       Optional: specify the directory of the input directory containing the diffs to be analyzed. Default is /Commits.
