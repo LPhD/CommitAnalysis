@@ -42,6 +42,7 @@ The ComAn.py Python script analyzes each "diff file" in the given input director
 ```
 Usage: python3 ComAn.py [DIR]
 
-    -<input_dir>       Optional: specify the directory of the input directory containing the diffs to be analyzed. Default is /Commits.
+    -<input_dir>       Optional: specify the directory of the input directory containing the diffs to be analyzed. 
+                       Default is /Commits.
     
 ```    
