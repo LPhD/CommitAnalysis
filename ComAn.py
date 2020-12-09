@@ -35,13 +35,19 @@ def analyzeFile(file):
         if relevantFilePart:
             if (line.startswith("- ")):
                 containsRemovalsInRelevantFiles = True
+                
+    #3: Potential Donor (as we need a test), also valid in-between-version and Target
+    #2: Needed at least once in between Donor and Target, also valid Target
+    #1: Valid in-between-version, also valid Target
+    #0: Valid Target if it is followed by the above     
     
     # After we analyze the whole commit, decide what to do
     if containsTests and not containsRemovalsInRelevantFiles: #Do we really need the second part? 
         # Current commit must contain tests and not contain removals (potential Donor commit) -> We currently can only backport additions, not removals
+        relevantCommitList.append(file)
         return 3
     elif not containsRemovalsInRelevantFiles and containsRelevantFileTypes:
-        # Current commit does not contain removals or tests, but contains changes to relevant file types (as it makes no sense to migrate code among identical versions) (potential Target commit, or valid version between Donor and Target) -> Same problem as above, if there happen removals in code that is part of the SU, the SU will add them again
+        # Current commit does not contain removals or tests, but contains changes to relevant file types (as it makes no sense to migrate code among identical versions) (valid version between Donor and Target, must occur at least once) -> Same problem as above, if there happen removals in code that is part of the SU, the SU will add them again
         relevantCommitList.append(file) 
         return 2          
     elif not containsRemovalsInRelevantFiles :
@@ -58,13 +64,56 @@ if len(sys.argv) != 2:
     inputDir = "Commits/" 
 else:
     inputDir = sys.argv[1]    
-            
-#Walk the directory                
-for filename in os.listdir(inputDir):
-    with open(os.path.join("Commits/", filename), 'r') as file: 
-        # Use to seperate different commit types (irrelevant 0, no harming changes 1, relevant/Target 2, tests/Donor 2)
-        analyzeFile(file)
 
+
+#3: Potential Donor (as we need a test), also valid in-between-version and Target
+#2: Needed at least once in between Donor and Target, also valid Target
+#1: Valid in-between-version, also valid Target
+#0: Valid Target if it is followed by the above
+# [Filename, status (int)]
+commitStatusList = []
+
+#Walk the directory (files are sorted ascending by name, we start with the oldest commit)               
+for fileName in sorted(os.listdir(inputDir)): 
+    with open(os.path.join("Commits/", fileName), 'r') as file: 
+        # Use to seperate different commit types 
+        state = analyzeFile(file)
+        commitStatusList.append([fileName,state])
+
+
+#Start at the last element    
+index = len(commitStatusList) -1
+number = 0
+
+#Identifies a history of commits fitting the desired criteria
+while index > 0:
+    #Take the last possible Donor and then search backwards
+    if (commitStatusList[index][1] == 3):
+        
+            anotherIndex = index - 1
+            counter = 0
+            #Check previous commits
+            while anotherIndex > 0 and not commitStatusList[anotherIndex][1] == 0: 
+                #print("We get here "+str(commitStatusList[anotherIndex][1]))
+            
+                #We need at least one relevant addition
+                if commitStatusList[anotherIndex][1] == 2:
+                    counter = counter + 1
+                    print("Counter: "+str(counter))
+                    
+                anotherIndex = anotherIndex -1
+                
+            #If we get here, the status of commit at anotherIndex should be 0
+            if counter > 0 and commitStatusList[anotherIndex][1] == 0:
+                print("Donor: "+str(commitStatusList[index][0]))
+                print("Target: "+str(commitStatusList[anotherIndex][0]))
+                #Count number of results
+                number = number + 1                
+            
+    index = index -1
+    
+
+    
 #Copy the commits that contain only additions in c./.h files to RelevantChanges/
 resultFoldername = "RelevantChanges/"
 # Delete old results
@@ -86,3 +135,4 @@ for file in testCommitList:
 #Print results
 print("Found relevant commits: "+str(len(relevantCommitList)))    
 print("Found commits with tests: "+str(len(testCommitList))) 
+print("Found fitting histories: "+str(number)) 
