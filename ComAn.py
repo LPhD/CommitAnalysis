@@ -27,7 +27,8 @@ def analyzeFile(file):
             #Skip until we reach the @ (and therefore the commit content)
             relevantFilePart = False
         
-            if ((".h " in line) or (".c " in line)) and ("main" in line):
+            if ((".h " in line) or (".c " in line)):
+            #if ((".h " in line) or (".c " in line)) and ("main" in line): #for php only
                 containsRelevantFileTypes = True
                 if DEBUG: print("Relevant "+line)
                 
@@ -39,10 +40,10 @@ def analyzeFile(file):
                 
             else:
                 if DEBUG: print("Other filetype: "+line)
-                # If we want to focus on changes in the "main" subfolder
-                if ((".h " in line) or (".c " in line)) and not ("main" in line):
-                    containsOtherChanges = True
-                    if DEBUG: print("Contains relevant changes not in main")
+                # If we want to focus on changes in the "main" subfolder (for php only)
+                #if ((".h " in line) or (".c " in line)) and not ("main" in line):
+                    #containsOtherChanges = True
+                    #if DEBUG: print("Contains relevant changes not in main")
         
         if (line.startswith("@")):
             relevantFilePart = True
